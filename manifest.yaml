@@ -119,7 +119,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: j202533543549.dkr.ecr.us-east-1.amazonaws.com/expense-frontend:1.0.0
+        image: 202533543549.dkr.ecr.us-east-1.amazonaws.com/expense-frontend:1.2.2
         resources:
           requests:
             cpu: "100m"
