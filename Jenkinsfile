@@ -50,14 +50,14 @@ pipeline {
             steps {
                 script {
                     sh """
-                        aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${account_id}.dkr.ecr.${region}.amazonaws.com
+                    aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${account_id}.dkr.ecr.${region}.amazonaws.com
 
-                        docker build -t ${ECR_REPO}:${appVersion} .
+                     docker build -t ${ECR_REPO}:${appVersion} .
 
-                        # Scan Docker image using trivy
-                        trivy image --exit-code 1 --severity HIGH,CRITICAL ${ECR_REPO}:${appVersion} || (echo "Image contains high/critical vulnerabilities!" && exit 1)
+                     # Scan Docker image using trivy container
+                     docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL ${ECR_REPO}:${appVersion}
 
-                        docker push ${ECR_REPO}:${appVersion}
+                      docker push ${ECR_REPO}:${appVersion}
                     """
                 }
             }
