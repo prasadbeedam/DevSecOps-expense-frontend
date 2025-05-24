@@ -8,23 +8,42 @@ pipeline {
         disableConcurrentBuilds()
         ansiColor('xterm')
     }
-
+    environment{
+        def appVersion = '' //variable declaration
+        // nexusUrl = 'nexus.daws78s.online:8081'
+        region = "us-east-1"
+        account_id = "202533543549"
+        
+    }
+    
     stages {
-        stage('build') {
-            steps {
+        stage('read the version'){
+            steps{
+                script{
+                    def packageJson = readJSON file: 'package.json'
+                    appVersion = packageJson.version
+                    echo "application version: $appVersion"
+                }
+            }
+        }
+        stage('Build'){
+            steps{
                 sh """
-                 docker build -t frontend:v1.0.1 .
-                 docker tag frontend:v1.0.1 202533543549.dkr.ecr.us-east-1.amazonaws.com/expense/dev/mysql:v1.0.1
-                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 202533543549.dkr.ecr.us-east-1.amazonaws.com
-                 docker push 202533543549.dkr.ecr.us-east-1.amazonaws.com/expense/dev/mysql:v1.0.1
+                zip -q -r frontend-${appVersion}.zip * -x Jenkinsfile -x frontend-${appVersion}.zip
+                ls -ltr
                 """
             }
         }
 
-        stage('test') {
-            steps {
-                sh 'echo this is test'
-                sh 'sleep 10'
+        stage('Docker build'){
+            steps{
+                sh """
+                    aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${account_id}.dkr.ecr.${region}.amazonaws.com
+
+                    docker build -t ${account_id}.dkr.ecr.${region}.amazonaws.com/expense-frontend:${appVersion} .
+
+                    docker push ${account_id}.dkr.ecr.${region}.amazonaws.com/expense-frontend:${appVersion}
+                """
             }
         }
 
