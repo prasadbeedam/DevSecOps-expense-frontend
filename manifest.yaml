@@ -119,7 +119,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: joindevops/frontend:v1.0
+        image: j202533543549.dkr.ecr.us-east-1.amazonaws.com/expense-frontend:1.0.0
         resources:
           requests:
             cpu: "100m"
@@ -169,4 +169,4 @@ spec:
   serviceRef:
     name: frontend # route traffic to the awesome-service
     port: 80
-  targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:315069654700:targetgroup/expense-dev-frontend/709ac65514f95b53
+  targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:202533543549:targetgroup/expense-dev-frontend/e493400182e0ad9c
