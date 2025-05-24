@@ -31,7 +31,7 @@ pipeline {
         stage('deploy') {
             steps {
                 sh """
-                aws eks update-kubeconfig --region us-east-1 --name roboshop
+                aws eks update-kubeconfig --region us-east-1 --name expense-dev
                 kubectl apply -f manifest.yaml
                 """
             }
